@@ -6,7 +6,7 @@ function afficherMot(mot, afficherBouton = true) {
 
     contenu.innerHTML = `
         <div class="bloc-texte">
-        <div class="mot">${mot.Mot.charAt(0).toUpperCase() + mot.Mot.slice(1)} ${'★'.repeat(mot.Difficulté)}</div>
+        <div class="mot">${mot.Mot.charAt(0).toUpperCase() + mot.Mot.slice(1)} <span style="color: royalblue">${'★'.repeat(mot.Difficulté)}</span></div>
         <div class="type">${mot.Type.charAt(0).toUpperCase() + mot.Type.slice(1)}</div>
         <div class="definition">${mot.Définition}</div>
         <div class="exemple">"${mot.Exemple}"</div>

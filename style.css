@@ -6,23 +6,24 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    min-height: 100vh;
+    text-align: center;
 }
 
 .carte {
     border: 2px solid #222;
     border-radius: 2rem;
     padding: 3rem 2rem;
-    max-width: 500px;
-    width: 90%;
-    text-align: center;
     background-color: white;
     box-shadow: 5px 5px 0 #000;
+    width: 90%;
+    max-width: 600px;
+    box-sizing: border-box;
 }
 
 .entete {
     text-align: left;
-    font-size: 1.2rem;
+    font-size: 1.5rem;
     margin-bottom: 2rem;
 }
 
@@ -33,26 +34,28 @@ body {
 }
 
 .type {
-    font-size: 1.6rem;
+    font-size: 1.5rem;
     font-style: italic;
     margin-bottom: 1rem;
+    color: darkblue;
 }
 
 .definition {
-    font-size: 1.2rem;
-    margin-bottom: 1rem;
+    font-size: 1.3rem;
+    margin-bottom: 1.5rem;
 }
 
 .exemple {
     font-style: italic;
+    font-size: 1.2rem;
     color: #333;
     margin-bottom: 2rem;
 }
 
 button {
     font-family: 'Comic Neue', cursive;
-    font-size: 1rem;
-    padding: 0.7rem 1.5rem;
+    font-size: 1.2rem;
+    padding: 0.8rem 1.5rem;
     border: 2px solid #2a6fb1;
     background-color: #a8d4f9;
     color: #094c7d;
@@ -63,4 +66,26 @@ button {
 
 button:hover {
     background-color: #87c4f4;
+}
+
+/* ✅ Responsive text & layout for small screens */
+@media (max-width: 480px) {
+    .entete {
+        font-size: 1.2rem;
+    }
+
+    .mot {
+        font-size: 2rem;
+    }
+
+    .type,
+    .definition,
+    .exemple {
+        font-size: 1rem;
+    }
+
+    button {
+        font-size: 1rem;
+        padding: 0.6rem 1.2rem;
+    }
 }

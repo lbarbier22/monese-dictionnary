@@ -3,6 +3,7 @@ let mots = [];
 function afficherMotAleatoire() {
     let mot = mots[Math.floor(Math.random() * mots.length)];
     document.getElementById('mot').textContent = mot.Mot.charAt(0).toUpperCase() + mot.Mot.slice(1) + ' ' + '*'.repeat(mot.Difficulté);
+    document.getElementById('type').textContent = mot.Type.charAt(0).toUpperCase() + mot.Type.slice(1);
     document.getElementById('definition').textContent = mot.Définition;
     document.getElementById('exemple').textContent = `"${mot.Exemple}"`;
 }

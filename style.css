@@ -18,6 +18,14 @@ body {
     box-shadow: 5px 5px 0 #000;
     width: 90%;
     max-width: 600px;
+
+    height: 600px;
+
+    overflow: hidden;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
     box-sizing: border-box;
 }
 
@@ -41,20 +49,20 @@ body {
 }
 
 .definition {
-    font-size: 1.3rem;
+    font-size: 2rem;
     margin-bottom: 1.5rem;
 }
 
 .exemple {
     font-style: italic;
-    font-size: 1.2rem;
+    font-size: 1.8rem;
     color: #333;
     margin-bottom: 2rem;
 }
 
 button {
     font-family: 'Comic Neue', cursive;
-    font-size: 1.2rem;
+    font-size: 2rem;
     padding: 0.8rem 1.5rem;
     border: 2px solid #2a6fb1;
     background-color: #a8d4f9;
@@ -70,21 +78,24 @@ button:hover {
 
 @media (max-width: 480px) {
     .entete {
-        font-size: 1.2rem;
+        font-size: 1.8rem;
     }
 
     .mot {
         font-size: 2rem;
     }
 
-    .type,
+    .type {
+        font-size: 1.5rem;
+    }
+
     .definition,
     .exemple {
-        font-size: 1rem;
+        font-size: 1.8rem;
     }
 
     button {
-        font-size: 1rem;
-        padding: 0.6rem 1.2rem;
+        font-size: 1.5rem;
+        padding: 0.6rem 2rem;
     }
 }

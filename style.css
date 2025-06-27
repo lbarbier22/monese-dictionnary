@@ -20,12 +20,9 @@ body {
 
     width: 100%;
     max-width: 600px;
-<<<<<<< Updated upstream
     min-height: 600px;
-=======
     height: 600px;
     overflow: hidden;
->>>>>>> Stashed changes
 
     display: flex;
     flex-direction: column;

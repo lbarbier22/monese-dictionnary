@@ -13,15 +13,12 @@ body {
 .carte {
     border: 2px solid #222;
     border-radius: 2rem;
-    padding: 3rem 2rem;
+    padding: 2rem;
     background-color: white;
     box-shadow: 5px 5px 0 #000;
     width: 90%;
     max-width: 600px;
-
-    height: 600px;
-
-    overflow: hidden;
+    min-height: 600px;
 
     display: flex;
     flex-direction: column;
@@ -29,10 +26,36 @@ body {
     box-sizing: border-box;
 }
 
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
 .entete {
-    text-align: left;
+    font-size: 1.8rem;
+    font-weight: bold;
+}
+
+.menu a {
+    margin-left: 1rem;
+    text-decoration: none;
+    font-weight: bold;
     font-size: 1.5rem;
-    margin-bottom: 2rem;
+    color: #2a6fb1;
+    transition: color 0.2s;
+}
+
+.menu a:hover {
+    color: #094c7d;
+}
+
+#contenu {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 .mot {
@@ -62,7 +85,7 @@ body {
 
 button {
     font-family: 'Comic Neue', cursive;
-    font-size: 2rem;
+    font-size: 1.5rem;
     padding: 0.8rem 1.5rem;
     border: 2px solid #2a6fb1;
     background-color: #a8d4f9;
@@ -70,15 +93,36 @@ button {
     border-radius: 0.7rem;
     cursor: pointer;
     transition: 0.2s;
+    align-self: center;
+    margin-top: auto;
 }
 
 button:hover {
     background-color: #87c4f4;
 }
 
+.liste-mots {
+    text-align: left;
+    padding-left: 1rem;
+    overflow-y: auto;
+    max-height: 500px;
+}
+
+.liste-mots a {
+    display: block;
+    color: #0066cc;
+    text-decoration: none;
+    margin: 0.4rem 0;
+    font-size: 1.3rem;
+}
+
+.liste-mots a:hover {
+    text-decoration: underline;
+}
+
 @media (max-width: 480px) {
     .entete {
-        font-size: 1.8rem;
+        font-size: 1.6rem;
     }
 
     .mot {
@@ -86,16 +130,20 @@ button:hover {
     }
 
     .type {
-        font-size: 1.4rem;
+        font-size: 1.2rem;
     }
 
     .definition,
     .exemple {
-        font-size: 1.2rem;
+        font-size: 1.4rem;
     }
 
     button {
-        font-size: 1.5rem;
-        padding: 0.6rem 2rem;
+        font-size: 1.2rem;
+        padding: 0.6rem 1.2rem;
+    }
+
+    .liste-mots a {
+        font-size: 1.1rem;
     }
 }

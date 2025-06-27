@@ -86,12 +86,12 @@ button:hover {
     }
 
     .type {
-        font-size: 1.5rem;
+        font-size: 1.4rem;
     }
 
     .definition,
     .exemple {
-        font-size: 1.8rem;
+        font-size: 1.2rem;
     }
 
     button {

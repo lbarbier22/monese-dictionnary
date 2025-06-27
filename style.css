@@ -1,24 +1,31 @@
 body {
     background-color: #fefefe;
     margin: 0;
-    padding: 0;
+    padding: 2vh 4vw; /* 🆕 Ajout de marges autour du contenu */
     font-family: 'Comic Neue', cursive;
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    text-align: center;
+    box-sizing: border-box;
 }
 
+/* ✅ Mise à jour de la carte */
 .carte {
     border: 2px solid #222;
     border-radius: 2rem;
-    padding: 2rem;
+    padding: 3rem 2rem;
     background-color: white;
     box-shadow: 5px 5px 0 #000;
-    width: 90%;
+
+    width: 100%;
     max-width: 600px;
+<<<<<<< Updated upstream
     min-height: 600px;
+=======
+    height: 600px;
+    overflow: hidden;
+>>>>>>> Stashed changes
 
     display: flex;
     flex-direction: column;
@@ -26,11 +33,18 @@ body {
     box-sizing: border-box;
 }
 
-.navbar {
+.navigation {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 1.5rem;
+    padding: 1rem 2rem;
+    width: 100%;
+    box-sizing: border-box;
+    background-color: #ffffff;
+    position: absolute;
+    top: 0;
+    left: 0;
+    border-bottom: 2px solid #000;
 }
 
 .entete {
@@ -39,10 +53,10 @@ body {
 }
 
 .menu a {
-    margin-left: 1rem;
+    margin-left: 1.5rem;
     text-decoration: none;
     font-weight: bold;
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     color: #2a6fb1;
     transition: color 0.2s;
 }
@@ -50,7 +64,6 @@ body {
 .menu a:hover {
     color: #094c7d;
 }
-
 #contenu {
     flex-grow: 1;
     display: flex;
@@ -106,6 +119,8 @@ button:hover {
     padding-left: 1rem;
     overflow-y: auto;
     max-height: 500px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
 }
 
 .liste-mots a {
@@ -118,6 +133,51 @@ button:hover {
 
 .liste-mots a:hover {
     text-decoration: underline;
+}
+
+#recherche {
+    font-size: 1.2rem;
+    padding: 0.5rem 1rem;
+    width: 80%;
+    margin-bottom: 1.5rem;
+    border-radius: 1rem;
+    border: 1px solid #ccc;
+}
+
+button#copy {
+    margin-top: 1rem;
+    background-color: #e6e6e6;
+    border: 1px solid #999;
+    color: #333;
+}
+
+button#copy:hover {
+    background-color: #dcdcdc;
+}
+
+.notif {
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #333;
+    color: #fff;
+    padding: 1rem 2rem;
+    border-radius: 1rem;
+    font-size: 1rem;
+    opacity: 0;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    z-index: 999;
+    pointer-events: none;
+}
+
+.notif.visible {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+.notif.erreur {
+    background-color: #c0392b;
 }
 
 @media (max-width: 480px) {

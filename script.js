@@ -5,10 +5,12 @@ function afficherMot(mot, afficherBouton = true) {
     const url = `${location.origin}/mot/${encodeURIComponent(mot.Mot.toLowerCase())}`;
 
     contenu.innerHTML = `
+        <div class="bloc-texte">
         <div class="mot">${mot.Mot.charAt(0).toUpperCase() + mot.Mot.slice(1)} ${'★'.repeat(mot.Difficulté)}</div>
         <div class="type">${mot.Type.charAt(0).toUpperCase() + mot.Type.slice(1)}</div>
         <div class="definition">${mot.Définition}</div>
         <div class="exemple">"${mot.Exemple}"</div>
+        </div>
         <button id="copy">🔗 Copier le lien</button>
         ${afficherBouton ? '<button id="btn">J’en veux un autre !</button>' : ''}
     `;

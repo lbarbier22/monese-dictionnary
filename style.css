@@ -104,7 +104,15 @@ button {
     cursor: pointer;
     transition: 0.2s;
     align-self: center;
-    margin-top: auto;
+    margin-top: 1rem;
+}
+
+.bloc-texte {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    overflow-y: auto;
 }
 
 button:hover {
@@ -137,8 +145,10 @@ button:hover {
     padding: 0.5rem 1rem;
     width: 80%;
     margin-bottom: 1.5rem;
-    border-radius: 1rem;
-    border: 1px solid #ccc;
+    border: 2px solid #222;
+    border-radius: 2rem;
+    background-color: white;
+    box-shadow: 5px 5px 0 #000;
 }
 
 button#copy {

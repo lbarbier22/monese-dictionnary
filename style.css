@@ -68,7 +68,6 @@ button:hover {
     background-color: #87c4f4;
 }
 
-/* ✅ Responsive text & layout for small screens */
 @media (max-width: 480px) {
     .entete {
         font-size: 1.2rem;

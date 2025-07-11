@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Favoris Team – Monèse</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<%- include('navbar') %>
+
+<div class="main-container">
+    <div class="carte">
+    <div class="header-favoris">
+        <div class="header-favoris-left">
+            <h1>🏆 Favoris Team</h1>
+        </div>
+    </div>
+    
+    <div class="team-info">
+        <p class="team-description">
+            Les 10 mots les plus aimés par la communauté Monèse !
+        </p>
+    </div>
+    
+    <div id="favoris-container">
+        <% if (motsFavoris.length === 0) { %>
+            <div id="favoris-vides">
+                <div style="text-align: center; margin-top: 2rem;">
+                    <p style="font-size: 1.5rem; color: #666; margin: 2rem 0;">
+                        Aucun favori communautaire pour le moment.<br>
+                        <span style="font-size: 1.2rem;">Soyez les premiers à aimer des mots !</span>
+                    </p>
+                    <div>
+                        <a href="/" style="text-decoration: none;">
+                            <button style="margin: 0.5rem;">🔀 Découvrir un mot</button>
+                        </a>
+                        <a href="/liste" style="text-decoration: none;">
+                            <button style="margin: 0.5rem;">📖 Parcourir la liste</button>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        <% } else { %>
+            <div id="favoris-liste" class="liste-scrollable">
+                <% motsFavoris.forEach((mot, index) => { %>
+                    <div class="mot-item-favoris team-favori">
+                        <div class="mot-favori-content">
+                            <div class="classement-numero-team <%= index < 3 ? 'top-3' : index < 5 ? 'top-5' : 'top-10' %>">
+                                <%= index + 1 %>
+                            </div>
+                            <a href="/mots/<%= encodeURIComponent(mot.Mot.toLowerCase()) %>" class="mot-favori-link">
+                                <%= mot.Mot.charAt(0).toUpperCase() + mot.Mot.slice(1) %>
+                                <span class="mot-difficulte"><%= '★'.repeat(mot.Difficulté) %></span>
+                            </a>
+                            <div class="team-stats">
+                                <span class="like-count">❤️ <%= mot.count %></span>
+                            </div>
+                        </div>
+                        <div class="mot-type"><%= mot.Type %></div>
+                    </div>
+                <% }); %>
+            </div>
+        <% } %>
+    </div>
+</div>
+</div>
+</body>
+</html>

@@ -11,11 +11,21 @@
 <div class="main-container">
     <div class="carte">
     <div class="header-favoris">
-        <h1>❤️ Mes favoris</h1>
-        <button id="vider-favoris" class="btn-vider-favoris" title="Vider tous les favoris" style="display: none;">
-            <span class="heart-icon">💔</span>
-            <span class="btn-text">Vider</span>
-        </button>
+        <div class="header-favoris-left">
+            <h1>❤️ Mes favoris</h1>
+        </div>
+        <div class="header-favoris-right">
+            <div class="tri-options" id="tri-options" style="display: none;">
+                <span>Trier par :</span>
+                <button class="tri-btn active" data-tri="classement">Mon classement</button>
+                <button class="tri-btn" data-tri="alphabetique">A-Z</button>
+                <button class="tri-btn" data-tri="difficulte">Difficulté</button>
+            </div>
+            <button id="vider-favoris" class="btn-vider-favoris" title="Vider tous les favoris" style="display: none;">
+                <span class="heart-icon">💔</span>
+                <span class="btn-text">Vider</span>
+            </button>
+        </div>
     </div>
     <div id="favoris-container">
         <div id="favoris-vides" style="display: none;">
@@ -43,68 +53,51 @@
 <script>
     const allMots = <%- JSON.stringify(mots) %>;
 
-    function getFavoris() {
-        return JSON.parse(localStorage.getItem('monese-favoris') || '[]');
-    }
-
-    function saveFavoris(favoris) {
-        localStorage.setItem('monese-favoris', JSON.stringify(favoris));
-    }
-
-    function confirmerSuppression(mot, button) {
-        const originalContent = button.innerHTML;
-        const originalTitle = button.title;
-        
-        // Changer le bouton en mode confirmation
-        button.innerHTML = '<span style="font-size: 0.8rem;">✓</span>';
-        button.title = 'Confirmer la suppression';
-        button.style.background = 'linear-gradient(135deg, #4CAF50 0%, #45a049 100%)';
-        
-        // Créer une nouvelle fonction pour confirmer
-        button.onclick = () => retirerFavori(mot);
-        
-        // Remettre le bouton normal après 3 secondes
-        setTimeout(() => {
-            button.innerHTML = originalContent;
-            button.title = originalTitle;
-            button.style.background = '';
-            button.onclick = () => confirmerSuppression(mot, button);
-        }, 3000);
-    }
-
-    function retirerFavori(mot) {
-        // Animation de suppression
-        const motElement = event.target.closest('.mot-item-favoris');
-        motElement.classList.add('removing');
-        
-        setTimeout(() => {
-            let favoris = getFavoris();
-            favoris = favoris.filter(f => f !== mot.toLowerCase());
-            saveFavoris(favoris);
-            afficherFavoris();
-        }, 300);
-    }
-
     function afficherFavoris() {
-        const favoris = getFavoris();
+        // Les favoris sont maintenant passés depuis le serveur
+        const favoris = <%- JSON.stringify(userFavoris) %>;
         const containerVides = document.getElementById('favoris-vides');
         const containerListe = document.getElementById('favoris-liste');
         const btnVider = document.getElementById('vider-favoris');
+        const triOptions = document.getElementById('tri-options');
 
         if (favoris.length === 0) {
             containerVides.style.display = 'block';
             containerListe.style.display = 'none';
             btnVider.style.display = 'none';
+            triOptions.style.display = 'none';
         } else {
             containerVides.style.display = 'none';
             containerListe.style.display = 'block';
             btnVider.style.display = 'flex';
+            triOptions.style.display = 'flex';
             
-            const motsFavoris = allMots.filter(m => favoris.includes(m.Mot.toLowerCase()));
+            // Ajouter les instructions de drag and drop
+            const instructionDiv = document.createElement('div');
+            instructionDiv.className = 'drag-instruction';
+            instructionDiv.textContent = '🖱️ Glissez et déposez les mots pour les réorganiser selon vos préférences !';
             
-            containerListe.innerHTML = motsFavoris.map(mot => 
-                `<div class="mot-item-favoris">
+            // Récupérer les mots favoris
+            const motsFavoris = allMots.filter(m => 
+                favoris.some(f => f.mot === m.Mot.toLowerCase())
+            ).map(mot => {
+                const favori = favoris.find(f => f.mot === mot.Mot.toLowerCase());
+                return { ...mot, position: favori.position || 1 };
+            });
+            
+            // Trier selon l'option sélectionnée
+            const triActuel = document.querySelector('.tri-btn.active')?.dataset.tri || 'classement';
+            trierFavoris(motsFavoris, triActuel);
+            
+            // Générer le HTML
+            const favorisHTML = motsFavoris.map((mot, index) => {
+                const badgeClass = (index + 1) <= 3 ? 'top-3' : 
+                                  (index + 1) <= 5 ? 'top-5' : 
+                                  (index + 1) <= 10 ? 'top-10' : '';
+                
+                return `<div class="mot-item-favoris" draggable="true" data-index="${index}" data-mot="${mot.Mot}">
                     <div class="mot-favori-content">
+                        <div class="classement-numero ${badgeClass}">${index + 1}</div>
                         <a href="/mots/${encodeURIComponent(mot.Mot.toLowerCase())}" class="mot-favori-link">
                             ${mot.Mot.charAt(0).toUpperCase() + mot.Mot.slice(1)}
                             <span class="mot-difficulte">${'★'.repeat(mot.Difficulté)}</span>
@@ -114,35 +107,167 @@
                         </button>
                     </div>
                     <div class="mot-type">${mot.Type}</div>
-                </div>`
-            ).join('');
+                </div>`;
+            }).join('');
+            
+            containerListe.innerHTML = instructionDiv.outerHTML + favorisHTML;
+            
+            // Activer le drag and drop uniquement pour le tri par classement
+            if (triActuel === 'classement') {
+                activerDragAndDrop();
+            }
         }
     }
 
-    function supprimerFavoriIndividuel(mot, button) {
+    function trierFavoris(motsFavoris, typeTri) {
+        switch(typeTri) {
+            case 'classement':
+                motsFavoris.sort((a, b) => a.position - b.position);
+                break;
+            case 'alphabetique':
+                motsFavoris.sort((a, b) => a.Mot.localeCompare(b.Mot));
+                break;
+            case 'difficulte':
+                motsFavoris.sort((a, b) => a.Difficulté - b.Difficulté);
+                break;
+        }
+    }
+
+    function activerDragAndDrop() {
+        const items = document.querySelectorAll('.mot-item-favoris');
+        
+        items.forEach(item => {
+            item.addEventListener('dragstart', handleDragStart);
+            item.addEventListener('dragover', handleDragOver);
+            item.addEventListener('drop', handleDrop);
+            item.addEventListener('dragend', handleDragEnd);
+        });
+    }
+
+    let draggedElement = null;
+
+    function handleDragStart(e) {
+        draggedElement = this;
+        this.classList.add('dragging');
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/html', this.outerHTML);
+    }
+
+    function handleDragOver(e) {
+        if (e.preventDefault) {
+            e.preventDefault();
+        }
+        
+        this.classList.add('drop-target');
+        e.dataTransfer.dropEffect = 'move';
+        return false;
+    }
+
+    function handleDrop(e) {
+        if (e.stopPropagation) {
+            e.stopPropagation();
+        }
+        
+        if (draggedElement !== this) {
+            const ancienIndex = parseInt(draggedElement.dataset.index);
+            const nouveauIndex = parseInt(this.dataset.index);
+            
+            // Réorganiser côté serveur
+            reordonnerFavoris(ancienIndex, nouveauIndex);
+        }
+        
+        this.classList.remove('drop-target');
+        return false;
+    }
+
+    function handleDragEnd(e) {
+        const items = document.querySelectorAll('.mot-item-favoris');
+        items.forEach(item => {
+            item.classList.remove('dragging', 'drop-target');
+        });
+    }
+
+    async function reordonnerFavoris(ancienIndex, nouveauIndex) {
+        try {
+            const response = await fetch('/api/favoris/reorder', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ ancienIndex, nouveauIndex })
+            });
+            
+            const result = await response.json();
+            if (result.success) {
+                // Recharger la page pour afficher le nouvel ordre
+                location.reload();
+            }
+        } catch (error) {
+            console.error('Erreur lors de la réorganisation:', error);
+        }
+    }
+
+    async function supprimerFavoriIndividuel(mot, button) {
         // Animation de suppression
         const motElement = button.closest('.mot-item-favoris');
         motElement.classList.add('removing');
         
-        setTimeout(() => {
-            let favoris = getFavoris();
-            favoris = favoris.filter(f => f !== mot.toLowerCase());
-            saveFavoris(favoris);
-            afficherFavoris();
+        setTimeout(async () => {
+            try {
+                const response = await fetch('/api/favoris/toggle', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ mot: mot.toLowerCase() })
+                });
+                
+                const result = await response.json();
+                if (result.success) {
+                    // Recharger la page pour afficher les changements
+                    location.reload();
+                }
+            } catch (error) {
+                console.error('Erreur lors de la suppression:', error);
+                motElement.classList.remove('removing');
+            }
         }, 300);
     }
 
-    function viderTousFavoris() {
+    async function viderTousFavoris() {
         if (confirm('Êtes-vous sûr de vouloir supprimer tous vos favoris ?')) {
-            saveFavoris([]);
-            afficherFavoris();
+            const favoris = <%- JSON.stringify(userFavoris) %>;
+            
+            try {
+                // Supprimer tous les favoris un par un
+                await Promise.all(favoris.map(favori => 
+                    fetch('/api/favoris/toggle', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ mot: favori.mot })
+                    })
+                ));
+                location.reload();
+            } catch (error) {
+                console.error('Erreur lors de la suppression de tous les favoris:', error);
+            }
         }
     }
-
     // Initialisation
     document.addEventListener('DOMContentLoaded', () => {
         afficherFavoris();
         document.getElementById('vider-favoris').addEventListener('click', viderTousFavoris);
+        
+        // Gestion des boutons de tri
+        document.querySelectorAll('.tri-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.tri-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                afficherFavoris();
+            });
+        });
     });
 </script>
 </div>

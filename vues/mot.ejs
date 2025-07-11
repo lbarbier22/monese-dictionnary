@@ -28,41 +28,60 @@
 </html>
 
 <script>
-    // Gestion des favoris
-    function getFavoris() {
-        return JSON.parse(localStorage.getItem('monese-favoris') || '[]');
-    }
-
-    function saveFavoris(favoris) {
-        localStorage.setItem('monese-favoris', JSON.stringify(favoris));
-    }
-
-    function estFavori(mot) {
-        const favoris = getFavoris();
-        return favoris.includes(mot.toLowerCase());
-    }
-
-    function toggleFavori(mot) {
-        let favoris = getFavoris();
-        const motLower = mot.toLowerCase();
-        
-        if (favoris.includes(motLower)) {
-            favoris = favoris.filter(f => f !== motLower);
-        } else {
-            favoris.push(motLower);
+    // Gestion des favoris côté serveur
+    async function getFavoris() {
+        try {
+            const response = await fetch('/api/favoris');
+            return await response.json();
+        } catch (error) {
+            console.error('Erreur lors de la récupération des favoris:', error);
+            return [];
         }
-        
-        saveFavoris(favoris);
-        updateFavoriButton(mot);
     }
 
-    function updateFavoriButton(mot) {
+    async function estFavori(mot) {
+        const favoris = await getFavoris();
+        return favoris.some(f => f.mot === mot.toLowerCase());
+    }
+
+    async function toggleFavori(mot) {
+        try {
+            const response = await fetch('/api/favoris/toggle', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ mot: mot.toLowerCase() })
+            });
+            
+            const result = await response.json();
+            if (result.success) {
+                updateFavoriButton(mot, result.isFavori);
+            }
+        } catch (error) {
+            console.error('Erreur lors de la modification des favoris:', error);
+        }
+    }
+
+    function updateFavoriButton(mot, isFavoriBool = null) {
         const favoriIcon = document.getElementById('favoriIcon');
         
-        if (estFavori(mot)) {
-            favoriIcon.textContent = '❤️';
+        if (isFavoriBool !== null) {
+            // Utiliser la valeur fournie
+            if (isFavoriBool) {
+                favoriIcon.textContent = '❤️';
+            } else {
+                favoriIcon.textContent = '🤍';
+            }
         } else {
-            favoriIcon.textContent = '🤍';
+            // Vérifier de manière asynchrone
+            estFavori(mot).then(isFav => {
+                if (isFav) {
+                    favoriIcon.textContent = '❤️';
+                } else {
+                    favoriIcon.textContent = '🤍';
+                }
+            });
         }
     }
 
@@ -75,13 +94,13 @@
         updateFavoriButton(motActuel);
         
         // Gestion du clic
-        heartElement.addEventListener('click', () => {
-            toggleFavori(motActuel);
+        heartElement.addEventListener('click', async () => {
+            await toggleFavori(motActuel);
         });
         
         // Effet de survol pour remplir le cœur
-        heartElement.addEventListener('mouseenter', () => {
-            if (!estFavori(motActuel)) {
+        heartElement.addEventListener('mouseenter', async () => {
+            if (!(await estFavori(motActuel))) {
                 iconElement.textContent = '❤️';
             }
         });

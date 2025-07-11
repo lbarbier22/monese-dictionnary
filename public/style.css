@@ -225,7 +225,7 @@ button:hover {
     }
 }
 
-/* Styles pour le drag and drop */
+/* Styles pour la page favoris simplifiés */
 .mot-item-favoris {
     margin: 0.8rem 30px;
     padding: 1rem;
@@ -234,38 +234,12 @@ button:hover {
     background: linear-gradient(135deg, #f8f9ff 0%, #ffffff 100%);
     transition: all 0.3s ease;
     break-inside: avoid;
-    cursor: grab;
-    user-select: none;
 }
 
 .mot-item-favoris:hover {
     border-color: #2a6fb1;
     box-shadow: 0 4px 8px rgba(42, 111, 177, 0.15);
     transform: translateY(-2px);
-}
-
-.mot-item-favoris.dragging {
-    opacity: 0.5;
-    transform: rotate(5deg);
-    cursor: grabbing;
-    z-index: 1000;
-}
-
-.mot-item-favoris.drop-target {
-    border-color: #4CAF50;
-    background: linear-gradient(135deg, #e8f5e8 0%, #f0fff0 100%);
-    border-style: dashed;
-}
-
-.drag-instruction {
-    text-align: center;
-    font-size: 0.9rem;
-    color: #666;
-    margin-bottom: 1rem;
-    padding: 0.5rem;
-    background: linear-gradient(135deg, #f0f8ff 0%, #e6f3ff 100%);
-    border-radius: 0.5rem;
-    border: 1px solid #b3d9ff;
 }
 
 .mot-favori-content {
@@ -505,94 +479,6 @@ button:hover {
     padding: 0;
 }
 
-/* Styles pour le système de classement des favoris avec drag and drop */
-.classement-numero {
-    background: linear-gradient(135deg, #2a6fb1 0%, #094c7d 100%);
-    color: white;
-    border-radius: 50%;
-    width: 32px;
-    height: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1rem;
-    font-weight: bold;
-    margin-right: 0.8rem;
-    box-shadow: 0 2px 4px rgba(42, 111, 177, 0.3);
-    flex-shrink: 0;
-}
-
-.classement-numero.top-3 {
-    background: linear-gradient(135deg, #ffd700 0%, #ffb300 100%);
-    color: #333;
-    box-shadow: 0 2px 4px rgba(255, 215, 0, 0.4);
-}
-
-.classement-numero.top-5 {
-    background: linear-gradient(135deg, #c0c0c0 0%, #a0a0a0 100%);
-    color: #333;
-    box-shadow: 0 2px 4px rgba(192, 192, 192, 0.4);
-}
-
-.classement-numero.top-10 {
-    background: linear-gradient(135deg, #cd7f32 0%, #b8860b 100%);
-    color: white;
-    box-shadow: 0 2px 4px rgba(205, 127, 50, 0.4);
-}
-
-/* Tri par classement simplifié */
-.tri-options {
-    display: flex;
-    gap: 0.5rem;
-    align-items: center;
-    margin-left: auto;
-    font-size: 0.9rem;
-}
-
-.tri-btn {
-    background: #f0f0f0;
-    border: 1px solid #ddd;
-    border-radius: 0.3rem;
-    padding: 0.4rem 0.8rem;
-    cursor: pointer;
-    font-size: 0.9rem;
-    font-family: 'Comic Neue', cursive;
-    transition: all 0.2s ease;
-}
-
-.tri-btn:hover {
-    background: #e0e0e0;
-}
-
-.tri-btn.active {
-    background: #2a6fb1;
-    color: white;
-    border-color: #2a6fb1;
-}
-
-/* Ajustement du header favoris pour inclure les options de tri */
-.header-favoris {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1rem;
-    flex-shrink: 0;
-    flex-wrap: wrap;
-    gap: 1rem;
-}
-
-.header-favoris-left {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-}
-
-.header-favoris-right {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-}
-
 /* Styles pour la page Favoris Team */
 .team-info {
     text-align: center;
@@ -681,7 +567,7 @@ button:hover {
     50% { transform: scale(1.2); }
 }
 
-/* Responsive pour Favoris Team */
+/* Responsive pour les favoris */
 @media (max-width: 768px) {
     .header-favoris {
         flex-direction: column;
@@ -689,84 +575,14 @@ button:hover {
         gap: 0.5rem;
     }
     
-    .header-favoris-left {
-        justify-content: center;
-    }
-    
-    .header-favoris-right {
-        justify-content: space-between;
-        flex-wrap: wrap;
-    }
-    
-    .tri-options {
-        order: -1;
-        margin: 0;
-        justify-content: center;
-    }
-    
-    .classement-numero {
-        width: 28px;
-        height: 28px;
-        font-size: 0.9rem;
-        margin-right: 0.5rem;
-    }
-    
     .mot-favori-content {
         flex-wrap: wrap;
         gap: 0.5rem;
     }
-    
-    .drag-instruction {
-        font-size: 0.8rem;
-        padding: 0.4rem;
-    }
-    
-    .classement-numero-team {
-        width: 32px;
-        height: 32px;
-        font-size: 1rem;
-        margin-right: 0.8rem;
-    }
-    
-    .classement-numero-team.top-3 {
-        transform: scale(1.05);
-    }
-    
-    .team-description {
-        font-size: 1rem;
-        padding: 0.8rem;
-    }
 }
 
 @media (max-width: 480px) {
-    .tri-btn {
-        padding: 0.3rem 0.5rem;
-        font-size: 0.8rem;
-    }
-    
     .header-favoris h1 {
         font-size: 1.8rem;
-    }
-    
-    .classement-numero {
-        width: 24px;
-        height: 24px;
-        font-size: 0.8rem;
-    }
-    
-    .classement-numero-team {
-        width: 28px;
-        height: 28px;
-        font-size: 0.9rem;
-        margin-right: 0.6rem;
-    }
-    
-    .like-count {
-        font-size: 0.8rem;
-        padding: 0.2rem 0.4rem;
-    }
-    
-    .team-description {
-        font-size: 0.9rem;
     }
 }

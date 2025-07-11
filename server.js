@@ -106,9 +106,9 @@ app.post('/api/favoris/toggle', (req, res) => {
     // Convertir ancien format si nécessaire
     userFavoris = userFavoris.map(favori => {
         if (typeof favori === 'string') {
-            return { mot: favori, position: userFavoris.indexOf(favori) + 1 };
+            return { mot: favori };
         }
-        return favori;
+        return { mot: favori.mot };
     });
     
     const motLower = mot.toLowerCase();
@@ -117,16 +117,10 @@ app.post('/api/favoris/toggle', (req, res) => {
     if (index !== -1) {
         // Retirer des favoris
         userFavoris.splice(index, 1);
-        // Réassigner les positions
-        userFavoris = userFavoris.map((favori, idx) => ({
-            ...favori,
-            position: idx + 1
-        }));
     } else {
         // Ajouter aux favoris
         userFavoris.push({
             mot: motLower,
-            position: userFavoris.length + 1,
             dateAjout: new Date().toISOString()
         });
     }
@@ -139,33 +133,6 @@ app.post('/api/favoris/toggle', (req, res) => {
         isFavori: index === -1,
         favoris: userFavoris
     });
-});
-
-app.post('/api/favoris/reorder', (req, res) => {
-    const { ancienIndex, nouveauIndex } = req.body;
-    const userId = getUserId(req);
-    
-    const favorisData = getFavorisData();
-    let userFavoris = favorisData[userId] || [];
-    
-    if (ancienIndex < 0 || nouveauIndex < 0 || ancienIndex >= userFavoris.length || nouveauIndex >= userFavoris.length) {
-        return res.status(400).json({ error: 'Index invalides' });
-    }
-    
-    // Réorganiser
-    const element = userFavoris.splice(ancienIndex, 1)[0];
-    userFavoris.splice(nouveauIndex, 0, element);
-    
-    // Mettre à jour les positions
-    userFavoris = userFavoris.map((favori, idx) => ({
-        ...favori,
-        position: idx + 1
-    }));
-    
-    favorisData[userId] = userFavoris;
-    saveFavorisData(favorisData);
-    
-    res.json({ success: true, favoris: userFavoris });
 });
 
 app.get('/api/favoris', (req, res) => {

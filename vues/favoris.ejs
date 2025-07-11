@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>❤️ Favoris – Monèse</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<%- include('navbar') %>
+
+<div class="carte">
+    <h1 style="text-align: center;">❤️ Vos favoris</h1>
+    <div id="favorisList" class="liste-favoris-scrollable">
+        <p>Chargement...</p>
+    </div>
+</div>
+
+<script>
+    const listeContainer = document.getElementById('favorisList');
+    const favoris = JSON.parse(localStorage.getItem("favorisMonese") || "[]");
+
+    if (favoris.length === 0) {
+        listeContainer.innerHTML = "<p>Vous n'avez encore aucun mot en favori.</p>";
+    } else {
+        listeContainer.innerHTML = "";
+        const motsTries = [...favoris].sort((a, b) => a.localeCompare(b));
+        motsTries.forEach(nom => {
+            const motElem = document.createElement("div");
+            motElem.className = "mot-favori";
+            motElem.innerHTML = `
+                <a href="/mots/${encodeURIComponent(nom)}">${nom.charAt(0).toUpperCase() + nom.slice(1)}</a>
+                <hr>
+            `;
+            listeContainer.appendChild(motElem);
+        });
+    }
+</script>
+</body>
+</html>

@@ -29,6 +29,10 @@ app.get('/mots/:nom', (req, res) => {
     }
 });
 
+app.get('/favoris', (req, res) => {
+    res.render('favoris');
+});
+
 app.listen(PORT, () => {
     console.log(`Serveur lancé : http://localhost:${PORT}`);
 });

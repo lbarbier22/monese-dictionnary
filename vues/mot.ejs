@@ -10,12 +10,15 @@
 <%- include('navbar') %>
 
 <div class="carte">
+    <div class="favori-btn">
+        <button id="btnFavori" title="Ajouter aux favoris">🩶</button>
+    </div>
     <div class="mot"><%= mot.Mot.charAt(0).toUpperCase() + mot.Mot.slice(1) %> <span style="color: royalblue"><%= '★'.repeat(mot.Difficulté) %></span></div>
     <div class="type"><%= mot.Type %></div>
     <div class="definition"><%= mot.Définition %></div>
     <div class="exemple">"<%= mot.Exemple %>"</div>
     <div class="bouton">
-        <button id="copierLien">🔗 Copier le lien</button>
+        <button id="copierLien" class="copierLien">🔗 Copier le lien</button>
         <span id="copieMessage" style="display: none; color: green; margin-left: 10px;">Lien copié !</span>
     </div>
 </div>
@@ -47,5 +50,41 @@
             message.style.display = "inline";
             setTimeout(() => message.style.display = "none", 2000);
         }
+    });
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const btnFavori = document.getElementById("btnFavori");
+        const motActuel = "<%= mot.Mot.replace(/"/g, '\\"') %>";
+
+        let favoris = JSON.parse(localStorage.getItem("favorisMonese") || "[]");
+
+        function majEtatFavori() {
+            favoris = JSON.parse(localStorage.getItem("favorisMonese") || "[]");
+
+            if (favoris.includes(motActuel)) {
+                btnFavori.classList.add("actif");
+                btnFavori.textContent = "❤️";
+            } else {
+                btnFavori.classList.remove("actif");
+                btnFavori.textContent = "🩶";
+            }
+        }
+
+        // Initialise l’état dès le chargement
+        majEtatFavori();
+
+        // Mise à jour au clic
+        btnFavori.addEventListener("click", () => {
+            const index = favoris.indexOf(motActuel);
+
+            if (index === -1) {
+                favoris.push(motActuel);
+            } else {
+                favoris.splice(index, 1);
+            }
+
+            localStorage.setItem("favorisMonese", JSON.stringify(favoris));
+            majEtatFavori();
+        });
     });
 </script>

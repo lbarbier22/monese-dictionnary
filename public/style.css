@@ -1,0 +1,171 @@
+body {
+    background-color: #fefefe;
+    margin: 0;
+    padding: 2vh 4vw;
+    font-family: 'Comic Neue', cursive;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    box-sizing: border-box;
+}
+
+.liste-scrollable {
+    column-count: 2;
+    column-gap: 2em;
+    overflow-y: auto;
+    padding: 1em;
+}
+
+.liste-scrollable ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.liste-scrollable li {
+    margin: 0.2em 0;
+    break-inside: avoid;
+}
+
+.liste-scrollable a {
+    text-decoration: none;
+    color: #2a6fb1;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.liste-scrollable a:hover {
+    text-decoration: underline;
+    color: #094c7d;
+}
+
+@media (max-width: 700px) {
+    .liste-scrollable {
+        column-count: 1;
+    }
+}
+
+.carte {
+    border: 2px solid #222;
+    border-radius: 2rem;
+    padding: 3rem 2rem;
+    background-color: white;
+    box-shadow: 5px 5px 0 #000;
+
+    width: 100%;
+    max-width: 600px;
+    min-height: 600px;
+    height: 600px;
+    overflow: hidden;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-sizing: border-box;
+}
+
+.navigation {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    width: 100%;
+    box-sizing: border-box;
+    background-color: #ffffff;
+    position: absolute;
+    top: 0;
+    left: 0;
+    border-bottom: 2px solid #000;
+}
+
+.entete {
+    font-size: 1.8rem;
+    font-weight: bold;
+}
+
+.menu a {
+    margin-left: 1.5rem;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1.2rem;
+    color: #2a6fb1;
+    transition: color 0.2s;
+}
+
+.menu a:hover {
+    color: #094c7d;
+}
+
+.mot {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+}
+
+.type {
+    font-size: 1.5rem;
+    font-style: italic;
+    margin-bottom: 1rem;
+    color: darkblue;
+}
+
+.definition {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+}
+
+.exemple {
+    font-style: italic;
+    font-size: 1.8rem;
+    color: #333;
+    margin-bottom: 2rem;
+}
+
+button {
+    font-family: 'Comic Neue', cursive;
+    font-size: 1.5rem;
+    padding: 0.8rem 1.5rem;
+    border: 2px solid #2a6fb1;
+    background-color: #a8d4f9;
+    color: #094c7d;
+    border-radius: 0.7rem;
+    cursor: pointer;
+    transition: 0.2s;
+    margin-top: 1rem;
+}
+
+.bouton {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+button:hover {
+    background-color: #87c4f4;
+}
+
+@media (max-width: 480px) {
+    .entete {
+        font-size: 1.6rem;
+    }
+
+    .mot {
+        font-size: 2rem;
+    }
+
+    .type {
+        font-size: 1.2rem;
+    }
+
+    .definition,
+    .exemple {
+        font-size: 1.4rem;
+    }
+
+    button {
+        font-size: 1.2rem;
+        padding: 0.6rem 1.2rem;
+    }
+
+}

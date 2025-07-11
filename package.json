@@ -1,0 +1,26 @@
+{
+  "name": "monese-dictionnary",
+  "version": "1.0.0",
+  "description": "Monèse",
+  "main": "kk/script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lbarbier22/monese-dictionnary.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/lbarbier22/monese-dictionnary/issues"
+  },
+  "homepage": "https://github.com/lbarbier22/monese-dictionnary#readme",
+  "dependencies": {
+    "ejs": "^3.1.10",
+    "express": "^5.1.0"
+  }
+}

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liste des mots – Monèse</title>
+    <link rel="stylesheet" href="/style.css"></head>
+<body>
+<%- include('navbar') %>
+
+<div class="carte">
+    <h1>📚 Liste des mots</h1>
+    <div class="liste-scrollable">
+        <% mots.forEach(m => { %>
+            <div class="mot-item">
+                <a href="/mots/<%= encodeURIComponent(m.Mot.toLowerCase()) %>">
+                    <%= m.Mot.charAt(0).toUpperCase() + m.Mot.slice(1) %>
+                </a>
+            </div>
+        <% }); %>
+    </div>
+</div>
+</body>
+</html>

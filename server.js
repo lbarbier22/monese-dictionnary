@@ -82,13 +82,13 @@ app.get('/favoris', (req, res) => {
     res.render('favoris', { mots, userFavoris });
 });
 
-app.get('/favoris-team', (req, res) => {
+app.get('/top10', (req, res) => {
     const topFavoris = getTopFavoris();
     const motsFavoris = topFavoris.map(item => {
         const mot = mots.find(m => m.Mot.toLowerCase() === item.mot.toLowerCase());
         return { ...mot, count: item.count };
     }).filter(Boolean);
-    res.render('favoris-team', { motsFavoris });
+    res.render('top10', { motsFavoris });
 });
 
 // API pour gérer les favoris

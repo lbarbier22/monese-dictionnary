@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title><%= mot.Mot %> – Monèse</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+<%- include('navbar') %>
+
+<div class="carte">
+    <div class="mot"><%= mot.Mot.charAt(0).toUpperCase() + mot.Mot.slice(1) %> <span style="color: royalblue"><%= '★'.repeat(mot.Difficulté) %></span></div>
+    <div class="type"><%= mot.Type %></div>
+    <div class="definition"><%= mot.Définition %></div>
+    <div class="exemple">"<%= mot.Exemple %>"</div>
+    <div class="partage">
+        <button id="copierLien">🔗 Copier le lien</button>
+        <span id="copieMessage" style="display: none; color: green; margin-left: 10px;">Lien copié !</span>
+    </div>
+</div>
+</body>
+</html>
+
+<script>
+    document.getElementById("copierLien").addEventListener("click", async () => {
+        try {
+            const url = window.location.href;
+            await navigator.clipboard.writeText(url);
+            const message = document.getElementById("copieMessage");
+            message.style.display = "inline";
+            setTimeout(() => message.style.display = "none", 2000);
+        } catch (err) {
+            alert("Impossible de copier le lien : " + err);
+        }
+    });
+</script>

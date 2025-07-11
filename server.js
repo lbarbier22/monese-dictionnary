@@ -11,7 +11,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/', (req, res) => {
     const mot = mots[Math.floor(Math.random() * mots.length)];
-    res.redirect(`/mot/${encodeURIComponent(mot.Mot)}`);
+    res.redirect(`/mots/${encodeURIComponent(mot.Mot)}`);
 });
 
 app.get('/liste', (req, res) => {
@@ -19,7 +19,7 @@ app.get('/liste', (req, res) => {
     res.render('index', { mots: motsTries });
 });
 
-app.get('/mot/:nom', (req, res) => {
+app.get('/mots/:nom', (req, res) => {
     const nom = req.params.nom.toLowerCase();
     const mot = mots.find(m => m.Mot.toLowerCase() === nom);
     if (mot) {

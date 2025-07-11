@@ -12,7 +12,7 @@
     <div class="liste-scrollable">
         <% mots.forEach(m => { %>
             <div class="mot-item">
-                <a href="/mot/<%= encodeURIComponent(m.Mot.toLowerCase()) %>">
+                <a href="/mots/<%= encodeURIComponent(m.Mot.toLowerCase()) %>">
                     <%= m.Mot.charAt(0).toUpperCase() + m.Mot.slice(1) %>
                 </a>
             </div>

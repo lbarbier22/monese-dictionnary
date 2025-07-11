@@ -23,15 +23,29 @@
 </html>
 
 <script>
-    document.getElementById("copierLien").addEventListener("click", async () => {
-        try {
-            const url = window.location.href;
-            await navigator.clipboard.writeText(url);
+    document.getElementById("copierLien").addEventListener("click", () => {
+        const url = window.location.href;
+
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(url).then(() => {
+                afficherMessage();
+            }).catch(err => {
+                alert("Erreur lors de la copie : " + err);
+            });
+        } else {
+            const input = document.createElement("input");
+            document.body.appendChild(input);
+            input.value = url;
+            input.select();
+            document.execCommand("copy");
+            document.body.removeChild(input);
+            afficherMessage();
+        }
+
+        function afficherMessage() {
             const message = document.getElementById("copieMessage");
             message.style.display = "inline";
             setTimeout(() => message.style.display = "none", 2000);
-        } catch (err) {
-            alert("Impossible de copier le lien : " + err);
         }
     });
 </script>

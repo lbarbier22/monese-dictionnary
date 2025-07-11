@@ -11,8 +11,8 @@
 
 <div class="main-container">
     <div class="carte">
-    <div class="heart-favoris" id="toggleFavori" data-mot="<%= mot.Mot %>" title="Ajouter/Retirer des favoris">
-        <span id="favoriIcon">🤍</span>
+    <div class="heart-favoris" id="likeButton" data-mot="<%= mot.Mot %>" title="Aimer ce mot">
+        <span id="likeIcon">🤍</span>
     </div>
     <div class="mot"><%= mot.Mot.charAt(0).toUpperCase() + mot.Mot.slice(1) %> <span style="color: royalblue"><%= '★'.repeat(mot.Difficulté) %></span></div>
     <div class="type"><%= mot.Type %></div>
@@ -28,89 +28,123 @@
 </html>
 
 <script>
-    // Gestion des favoris côté serveur
-    async function getFavoris() {
+    function hasUserLiked(mot) {
+        const likedWords = JSON.parse(localStorage.getItem('likedWords') || '[]');
+        return likedWords.includes(mot.toLowerCase());
+    }
+    
+    function markUserLiked(mot) {
+        const likedWords = JSON.parse(localStorage.getItem('likedWords') || '[]');
+        const motLower = mot.toLowerCase();
+        if (!likedWords.includes(motLower)) {
+            likedWords.push(motLower);
+            localStorage.setItem('likedWords', JSON.stringify(likedWords));
+        }
+    }
+    
+    async function getLikes(mot) {
         try {
-            const response = await fetch('/api/favoris');
-            return await response.json();
+            const response = await fetch(`/api/likes/${encodeURIComponent(mot.toLowerCase())}`);
+            const data = await response.json();
+            return data.likes;
         } catch (error) {
-            console.error('Erreur lors de la récupération des favoris:', error);
-            return [];
+            console.error('Erreur lors de la récupération des likes:', error);
+            return 0;
         }
     }
 
-    async function estFavori(mot) {
-        const favoris = await getFavoris();
-        return favoris.some(f => f.mot === mot.toLowerCase());
-    }
-
-    async function toggleFavori(mot) {
-        try {
-            const response = await fetch('/api/favoris/toggle', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ mot: mot.toLowerCase() })
-            });
-            
-            const result = await response.json();
-            if (result.success) {
-                updateFavoriButton(mot, result.isFavori);
-            }
-        } catch (error) {
-            console.error('Erreur lors de la modification des favoris:', error);
-        }
-    }
-
-    function updateFavoriButton(mot, isFavoriBool = null) {
-        const favoriIcon = document.getElementById('favoriIcon');
+    let isLiking = false;
+    
+    async function toggleLike(mot) {
+        if (isLiking) return;
         
-        if (isFavoriBool !== null) {
-            // Utiliser la valeur fournie
-            if (isFavoriBool) {
-                favoriIcon.textContent = '❤️';
-            } else {
-                favoriIcon.textContent = '🤍';
-            }
-        } else {
-            // Vérifier de manière asynchrone
-            estFavori(mot).then(isFav => {
-                if (isFav) {
-                    favoriIcon.textContent = '❤️';
-                } else {
-                    favoriIcon.textContent = '🤍';
+        const userAlreadyLiked = hasUserLiked(mot);
+        
+        isLiking = true;
+        const likeButton = document.getElementById('likeButton');
+        likeButton.style.opacity = '0.6';
+        
+        try {
+            if (userAlreadyLiked) {
+                const response = await fetch('/api/likes/remove', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ mot: mot.toLowerCase() })
+                });
+                
+                const result = await response.json();
+                if (result.success) {
+                    removeUserLike(mot);
+                    updateLikeDisplay();
                 }
-            });
+            } else {
+                const response = await fetch('/api/likes/add', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ mot: mot.toLowerCase() })
+                });
+                
+                const result = await response.json();
+                if (result.success) {
+                    markUserLiked(mot);
+                    updateLikeDisplay();
+                }
+            }
+            
+            const icon = document.getElementById('likeIcon');
+            icon.style.transform = 'scale(1.3)';
+            setTimeout(() => {
+                icon.style.transform = 'scale(1)';
+            }, 200);
+            
+        } catch (error) {
+            console.error('Erreur lors de la modification du like:', error);
+        } finally {
+            setTimeout(() => {
+                isLiking = false;
+                likeButton.style.opacity = '1';
+            }, 500);
+        }
+    }
+    
+    function removeUserLike(mot) {
+        const likedWords = JSON.parse(localStorage.getItem('likedWords') || '[]');
+        const motLower = mot.toLowerCase();
+        const index = likedWords.indexOf(motLower);
+        if (index > -1) {
+            likedWords.splice(index, 1);
+            localStorage.setItem('likedWords', JSON.stringify(likedWords));
         }
     }
 
-    // Initialisation
-    document.addEventListener('DOMContentLoaded', () => {
+    function updateLikeDisplay() {
         const motActuel = '<%= mot.Mot %>';
-        const heartElement = document.getElementById('toggleFavori');
-        const iconElement = document.getElementById('favoriIcon');
+        const icon = document.getElementById('likeIcon');
         
-        updateFavoriButton(motActuel);
+        if (hasUserLiked(motActuel)) {
+            icon.textContent = '❤️';
+            icon.style.color = '#e74c3c';
+        } else {
+            icon.textContent = '🤍';
+            icon.style.color = '#95a5a6';
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+        const motActuel = '<%= mot.Mot %>';
+        const likeButton = document.getElementById('likeButton');
         
-        // Gestion du clic
-        heartElement.addEventListener('click', async () => {
-            await toggleFavori(motActuel);
-        });
+        updateLikeDisplay();
         
-        // Effet de survol pour remplir le cœur
-        heartElement.addEventListener('mouseenter', async () => {
-            if (!(await estFavori(motActuel))) {
-                iconElement.textContent = '❤️';
-            }
-        });
-        
-        heartElement.addEventListener('mouseleave', () => {
-            updateFavoriButton(motActuel);
+        likeButton.addEventListener('click', async () => {
+            await toggleLike(motActuel);
         });
     });
 
-    // Gestion copie de lien (code existant)
     document.getElementById("copierLien").addEventListener("click", () => {
         const url = window.location.href;
 

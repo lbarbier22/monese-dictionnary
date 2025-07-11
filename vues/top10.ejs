@@ -53,7 +53,7 @@
                                 <span class="mot-difficulte"><%= '★'.repeat(mot.Difficulté) %></span>
                             </a>
                             <div class="team-stats">
-                                <span class="like-count">❤️ <%= mot.count %></span>
+                                <span class="like-count">❤️ <%= mot.count %> like<%= mot.count > 1 ? 's' : '' %></span>
                             </div>
                         </div>
                         <div class="mot-type"><%= mot.Type %></div>

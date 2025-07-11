@@ -44,13 +44,12 @@
     const allMots = <%- JSON.stringify(mots) %>;
 
     function afficherFavoris() {
-        // Les favoris sont maintenant passés depuis le serveur
-        const favoris = <%- JSON.stringify(userFavoris) %>;
+        const likedWords = JSON.parse(localStorage.getItem('likedWords') || '[]');
         const containerVides = document.getElementById('favoris-vides');
         const containerListe = document.getElementById('favoris-liste');
         const btnVider = document.getElementById('vider-favoris');
 
-        if (favoris.length === 0) {
+        if (likedWords.length === 0) {
             containerVides.style.display = 'block';
             containerListe.style.display = 'none';
             btnVider.style.display = 'none';
@@ -59,12 +58,10 @@
             containerListe.style.display = 'block';
             btnVider.style.display = 'flex';
             
-            // Récupérer les mots favoris et les trier par ordre alphabétique
             const motsFavoris = allMots.filter(m => 
-                favoris.some(f => f.mot === m.Mot.toLowerCase())
+                likedWords.includes(m.Mot.toLowerCase())
             ).sort((a, b) => a.Mot.localeCompare(b.Mot));
             
-            // Générer le HTML simplifié
             containerListe.innerHTML = motsFavoris.map(mot => 
                 `<div class="mot-item-favoris">
                     <div class="mot-favori-content">
@@ -83,25 +80,28 @@
     }
 
     async function supprimerFavoriIndividuel(mot, button) {
-        // Animation de suppression
         const motElement = button.closest('.mot-item-favoris');
         motElement.classList.add('removing');
         
         setTimeout(async () => {
             try {
-                const response = await fetch('/api/favoris/toggle', {
+                const likedWords = JSON.parse(localStorage.getItem('likedWords') || '[]');
+                const motLower = mot.toLowerCase();
+                const index = likedWords.indexOf(motLower);
+                if (index > -1) {
+                    likedWords.splice(index, 1);
+                    localStorage.setItem('likedWords', JSON.stringify(likedWords));
+                }
+                
+                await fetch('/api/likes/remove', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ mot: mot.toLowerCase() })
+                    body: JSON.stringify({ mot: motLower })
                 });
                 
-                const result = await response.json();
-                if (result.success) {
-                    // Recharger la page pour afficher les changements
-                    location.reload();
-                }
+                afficherFavoris();
             } catch (error) {
                 console.error('Erreur lors de la suppression:', error);
                 motElement.classList.remove('removing');
@@ -111,26 +111,28 @@
 
     async function viderTousFavoris() {
         if (confirm('Êtes-vous sûr de vouloir supprimer tous vos favoris ?')) {
-            const favoris = <%- JSON.stringify(userFavoris) %>;
+            const likedWords = JSON.parse(localStorage.getItem('likedWords') || '[]');
             
             try {
-                // Supprimer tous les favoris un par un
-                await Promise.all(favoris.map(favori => 
-                    fetch('/api/favoris/toggle', {
+                await Promise.all(likedWords.map(mot => 
+                    fetch('/api/likes/remove', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
                         },
-                        body: JSON.stringify({ mot: favori.mot })
+                        body: JSON.stringify({ mot: mot })
                     })
                 ));
-                location.reload();
+                
+                localStorage.removeItem('likedWords');
+                
+                afficherFavoris();
             } catch (error) {
                 console.error('Erreur lors de la suppression de tous les favoris:', error);
             }
         }
     }
-    // Initialisation
+    
     document.addEventListener('DOMContentLoaded', () => {
         afficherFavoris();
         document.getElementById('vider-favoris').addEventListener('click', viderTousFavoris);

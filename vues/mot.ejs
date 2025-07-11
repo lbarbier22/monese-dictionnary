@@ -9,7 +9,11 @@
 <body>
 <%- include('navbar') %>
 
-<div class="carte">
+<div class="main-container">
+    <div class="carte">
+    <div class="heart-favoris" id="toggleFavori" data-mot="<%= mot.Mot %>" title="Ajouter/Retirer des favoris">
+        <span id="favoriIcon">🤍</span>
+    </div>
     <div class="mot"><%= mot.Mot.charAt(0).toUpperCase() + mot.Mot.slice(1) %> <span style="color: royalblue"><%= '★'.repeat(mot.Difficulté) %></span></div>
     <div class="type"><%= mot.Type %></div>
     <div class="definition"><%= mot.Définition %></div>
@@ -19,10 +23,75 @@
         <span id="copieMessage" style="display: none; color: green; margin-left: 10px;">Lien copié !</span>
     </div>
 </div>
+</div>
 </body>
 </html>
 
 <script>
+    // Gestion des favoris
+    function getFavoris() {
+        return JSON.parse(localStorage.getItem('monese-favoris') || '[]');
+    }
+
+    function saveFavoris(favoris) {
+        localStorage.setItem('monese-favoris', JSON.stringify(favoris));
+    }
+
+    function estFavori(mot) {
+        const favoris = getFavoris();
+        return favoris.includes(mot.toLowerCase());
+    }
+
+    function toggleFavori(mot) {
+        let favoris = getFavoris();
+        const motLower = mot.toLowerCase();
+        
+        if (favoris.includes(motLower)) {
+            favoris = favoris.filter(f => f !== motLower);
+        } else {
+            favoris.push(motLower);
+        }
+        
+        saveFavoris(favoris);
+        updateFavoriButton(mot);
+    }
+
+    function updateFavoriButton(mot) {
+        const favoriIcon = document.getElementById('favoriIcon');
+        
+        if (estFavori(mot)) {
+            favoriIcon.textContent = '❤️';
+        } else {
+            favoriIcon.textContent = '🤍';
+        }
+    }
+
+    // Initialisation
+    document.addEventListener('DOMContentLoaded', () => {
+        const motActuel = '<%= mot.Mot %>';
+        const heartElement = document.getElementById('toggleFavori');
+        const iconElement = document.getElementById('favoriIcon');
+        
+        updateFavoriButton(motActuel);
+        
+        // Gestion du clic
+        heartElement.addEventListener('click', () => {
+            toggleFavori(motActuel);
+        });
+        
+        // Effet de survol pour remplir le cœur
+        heartElement.addEventListener('mouseenter', () => {
+            if (!estFavori(motActuel)) {
+                iconElement.textContent = '❤️';
+            }
+        });
+        
+        heartElement.addEventListener('mouseleave', () => {
+            updateFavoriButton(motActuel);
+        });
+    });
+
+    // Gestion copie de lien (code existant)
     document.getElementById("copierLien").addEventListener("click", () => {
         const url = window.location.href;
 

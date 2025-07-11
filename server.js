@@ -19,6 +19,10 @@ app.get('/liste', (req, res) => {
     res.render('index', { mots: motsTries });
 });
 
+app.get('/favoris', (req, res) => {
+    res.render('favoris', { mots });
+});
+
 app.get('/mots/:nom', (req, res) => {
     const nom = req.params.nom.toLowerCase();
     const mot = mots.find(m => m.Mot.toLowerCase() === nom);

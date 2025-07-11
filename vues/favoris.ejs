@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mes favoris – Monèse</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<%- include('navbar') %>
+
+<div class="main-container">
+    <div class="carte">
+    <div class="header-favoris">
+        <h1>❤️ Mes favoris</h1>
+        <button id="vider-favoris" class="btn-vider-favoris" title="Vider tous les favoris" style="display: none;">
+            <span class="heart-icon">💔</span>
+            <span class="btn-text">Vider</span>
+        </button>
+    </div>
+    <div id="favoris-container">
+        <div id="favoris-vides" style="display: none;">
+            <p style="text-align: center; font-size: 1.5rem; color: #666; margin: 2rem 0;">
+                Aucun mot en favoris pour le moment.<br>
+                <span style="font-size: 1.2rem;">Parcourez le dictionnaire et ajoutez vos mots préférés !</span>
+            </p>
+            <div style="text-align: center;">
+                <a href="/" style="text-decoration: none;">
+                    <button style="margin: 0.5rem;">🔀 Découvrir un mot</button>
+                </a>
+                <a href="/liste" style="text-decoration: none;">
+                    <button style="margin: 0.5rem;">📖 Parcourir la liste</button>
+                </a>
+            </div>
+        </div>
+        <div id="favoris-liste" class="liste-scrollable" style="display: none;">
+            <!-- Les favoris seront ajoutés ici par JavaScript -->
+        </div>
+    </div>
+</div>
+
+<script>
+    const allMots = <%- JSON.stringify(mots) %>;
+
+    function getFavoris() {
+        return JSON.parse(localStorage.getItem('monese-favoris') || '[]');
+    }
+
+    function saveFavoris(favoris) {
+        localStorage.setItem('monese-favoris', JSON.stringify(favoris));
+    }
+
+    function confirmerSuppression(mot, button) {
+        const originalContent = button.innerHTML;
+        const originalTitle = button.title;
+        
+        // Changer le bouton en mode confirmation
+        button.innerHTML = '<span style="font-size: 0.8rem;">✓</span>';
+        button.title = 'Confirmer la suppression';
+        button.style.background = 'linear-gradient(135deg, #4CAF50 0%, #45a049 100%)';
+        
+        // Créer une nouvelle fonction pour confirmer
+        button.onclick = () => retirerFavori(mot);
+        
+        // Remettre le bouton normal après 3 secondes
+        setTimeout(() => {
+            button.innerHTML = originalContent;
+            button.title = originalTitle;
+            button.style.background = '';
+            button.onclick = () => confirmerSuppression(mot, button);
+        }, 3000);
+    }
+
+    function retirerFavori(mot) {
+        // Animation de suppression
+        const motElement = event.target.closest('.mot-item-favoris');
+        motElement.classList.add('removing');
+        
+        setTimeout(() => {
+            let favoris = getFavoris();
+            favoris = favoris.filter(f => f !== mot.toLowerCase());
+            saveFavoris(favoris);
+            afficherFavoris();
+        }, 300);
+    }
+
+    function afficherFavoris() {
+        const favoris = getFavoris();
+        const containerVides = document.getElementById('favoris-vides');
+        const containerListe = document.getElementById('favoris-liste');
+        const btnVider = document.getElementById('vider-favoris');
+
+        if (favoris.length === 0) {
+            containerVides.style.display = 'block';
+            containerListe.style.display = 'none';
+            btnVider.style.display = 'none';
+        } else {
+            containerVides.style.display = 'none';
+            containerListe.style.display = 'block';
+            btnVider.style.display = 'flex';
+            
+            const motsFavoris = allMots.filter(m => favoris.includes(m.Mot.toLowerCase()));
+            
+            containerListe.innerHTML = motsFavoris.map(mot => 
+                `<div class="mot-item-favoris">
+                    <div class="mot-favori-content">
+                        <a href="/mots/${encodeURIComponent(mot.Mot.toLowerCase())}" class="mot-favori-link">
+                            ${mot.Mot.charAt(0).toUpperCase() + mot.Mot.slice(1)}
+                            <span class="mot-difficulte">${'★'.repeat(mot.Difficulté)}</span>
+                        </a>
+                        <button onclick="supprimerFavoriIndividuel('${mot.Mot}', this)" class="btn-supprimer-individuel" title="Retirer ce favori">
+                            ✕
+                        </button>
+                    </div>
+                    <div class="mot-type">${mot.Type}</div>
+                </div>`
+            ).join('');
+        }
+    }
+
+    function supprimerFavoriIndividuel(mot, button) {
+        // Animation de suppression
+        const motElement = button.closest('.mot-item-favoris');
+        motElement.classList.add('removing');
+        
+        setTimeout(() => {
+            let favoris = getFavoris();
+            favoris = favoris.filter(f => f !== mot.toLowerCase());
+            saveFavoris(favoris);
+            afficherFavoris();
+        }, 300);
+    }
+
+    function viderTousFavoris() {
+        if (confirm('Êtes-vous sûr de vouloir supprimer tous vos favoris ?')) {
+            saveFavoris([]);
+            afficherFavoris();
+        }
+    }
+
+    // Initialisation
+    document.addEventListener('DOMContentLoaded', () => {
+        afficherFavoris();
+        document.getElementById('vider-favoris').addEventListener('click', viderTousFavoris);
+    });
+</script>
+</div>
+</body>
+</html>

@@ -123,6 +123,14 @@ body {
     margin-bottom: 2rem;
 }
 
+.bouton {
+    display: flex;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+    margin-top: auto;
+}
+
 .copierLien {
     font-family: 'Comic Neue', cursive;
     font-size: 1.5rem;
@@ -133,16 +141,26 @@ body {
     border-radius: 0.7rem;
     cursor: pointer;
     transition: 0.2s;
-    margin-top: 1rem;
-}
-
-.bouton {
-    display: flex;
-    justify-content: center;
-    align-items: center;
 }
 
 .copierLien:hover {
+    background-color: #87c4f4;
+}
+
+.nouveauMot {
+    font-family: 'Comic Neue', cursive;
+    font-size: 1.5rem;
+    padding: 0.8rem 1.5rem;
+    border: 2px solid #2a6fb1;
+    background-color: #a8d4f9;
+    color: #094c7d;
+    border-radius: 0.7rem;
+    cursor: pointer;
+    transition: 0.2s;
+    margin-left: 1rem;
+}
+
+.nouveauMot:hover {
     background-color: #87c4f4;
 }
 
